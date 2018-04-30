@@ -26,6 +26,7 @@ class SnapcastProtocol(asyncio.Protocol):
         self._buffer = {}
         self._callbacks = callbacks
         self._data_buffer = ''
+        self._listeners = []
 
     def connection_made(self, transport):
         """When a connection is made."""
@@ -66,6 +67,12 @@ class SnapcastProtocol(asyncio.Protocol):
         """Handle JSONRPC notification."""
         if data.get('method') in self._callbacks:
             self._callbacks.get(data.get('method'))(data.get('params'))
+        for listener in self._listeners:
+            listener(data)
+
+    def add_notification_listener(self, listener):
+        if callable(listener):
+            self._listeners.append(listener)
 
     @asyncio.coroutine
     def request(self, method, params):

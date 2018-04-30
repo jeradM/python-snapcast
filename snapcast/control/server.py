@@ -290,6 +290,9 @@ class Snapserver(object):
         """Set new client callback function."""
         self._new_client_callback_func = func
 
+    def add_notification_listener(self, listener):
+        self._protocol.add_notification_listener(listener)
+
     def __repr__(self):
         """String representation."""
         return 'Snapserver {} ({})'.format(self.version, self._host)
